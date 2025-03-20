@@ -11,7 +11,7 @@ export default [
     files: ['**/*.ts'],
     languageOptions: {
       ecmaVersion: 'latest',
-      sourceType: 'module',
+      sourceType: 'commonjs',
       parser: tsParser,
       parserOptions: {
         project: './tsconfig.json',
