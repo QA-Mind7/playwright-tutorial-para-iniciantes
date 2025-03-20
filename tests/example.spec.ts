@@ -9,9 +9,9 @@ test('login', async ({ page }, testInfo) => {
 
   await page.getByTestId('login-button').click()
   await page.waitForURL(`${Config.BASE_URL}/inventory.html`)
-  expect(page.getByTestId('inventory-container')).toBeVisible()
+  await expect(page.getByTestId('inventory-container')).toBeVisible()
   
-  testInfo.attach('successfull login', {
+  await testInfo.attach('successfull login', {
     body: await page.screenshot({ fullPage: true }),
     contentType: 'image/png'
   })
@@ -22,7 +22,7 @@ test('has title', async ({ page }, testInfo) => {
 
   await expect(page).toHaveTitle(/Playwright/);
   
-  testInfo.attach('', {
+  await testInfo.attach('', {
     body: await page.screenshot({ fullPage: true }),
     contentType: 'image/png'
   })
@@ -35,7 +35,7 @@ test('get started link', async ({ page }, testInfo) => {
 
   await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
   
-  testInfo.attach('', {
+  await testInfo.attach('', {
     body: await page.screenshot({ fullPage: true }),
     contentType: 'image/png'
   })
