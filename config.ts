@@ -1,7 +1,7 @@
-import * as dotenv from "dotenv";
-import Joi from "joi";
+import * as dotenv from 'dotenv'
+import Joi from 'joi'
 
-dotenv.config();
+dotenv.config()
 
 const envSchema = Joi.object({
   // Environment
@@ -13,25 +13,25 @@ const envSchema = Joi.object({
   WORKERS: Joi.number().integer().min(1).required(),
   RETRY_FAILED: Joi.number().integer().min(0).required(),
   MAX_TEST_RUNTIME: Joi.number().integer().min(1000).required(),
-  HEADLESS_BROWSER: Joi.boolean().required(),  
+  HEADLESS_BROWSER: Joi.boolean().required(),
 }).unknown(true)
 
 const envVars = envSchema.validate(process.env, {
   allowUnknown: true,
   abortEarly: false,
-});
+})
 
 if (envVars.error) {
-  throw new Error(`Environment validation error: ${envVars.error.message}`);
+  throw new Error(`Environment validation error: ${envVars.error.message}`)
 }
 
 export class Config {
-  static readonly BASE_URL: string = envVars.value.BASE_URL;
-  static readonly USER_NAME: string = envVars.value.USER_NAME;
-  static readonly PASSWORD: string = envVars.value.PASSWORD;
+  static readonly BASE_URL: string = envVars.value.BASE_URL
+  static readonly USER_NAME: string = envVars.value.USER_NAME
+  static readonly PASSWORD: string = envVars.value.PASSWORD
 
-  static readonly WORKERS: number = envVars.value.WORKERS;
-  static readonly RETRY_FAILED: number = envVars.value.RETRY_FAILED;
-  static readonly MAX_TEST_RUNTIME: number = envVars.value.MAX_TEST_RUNTIME;
-  static readonly HEADLESS_BROWSER: boolean = envVars.value.HEADLESS_BROWSER;
+  static readonly WORKERS: number = envVars.value.WORKERS
+  static readonly RETRY_FAILED: number = envVars.value.RETRY_FAILED
+  static readonly MAX_TEST_RUNTIME: number = envVars.value.MAX_TEST_RUNTIME
+  static readonly HEADLESS_BROWSER: boolean = envVars.value.HEADLESS_BROWSER
 }

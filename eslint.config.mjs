@@ -1,24 +1,32 @@
-// @ts-check
+import tsPlugin from '@typescript-eslint/eslint-plugin'
+import tsParser from '@typescript-eslint/parser'
+import prettier from 'eslint-config-prettier'
+import pluginPrettier from 'eslint-plugin-prettier'
 
-import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
-
-export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
+export default [
   {
-    // define TS project config to enable "linting with type information"
+    ignores: ['node_modules', 'dist', 'playwright-report'],
+  },
+  {
+    files: ['**/*.ts'],
     languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parser: tsParser,
       parserOptions: {
-        // reuse the existing `tsconfig.json`
-        project: true,
-        tsconfigRootDir: ".",
+        project: './tsconfig.json',
+        tsconfigRootDir: import.meta.dirname,
       },
     },
-    // enable linting rules beneficial for Playwright projects
-    rules: {
-      "@typescript-eslint/no-floating-promises": "error",
-      "@typescript-eslint/await-thenable": "error",
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+      prettier: pluginPrettier,
     },
-  }
-);
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/await-thenable': 'error',
+      'prettier/prettier': 'error',
+    },
+  },
+  prettier,
+]
