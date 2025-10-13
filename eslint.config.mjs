@@ -1,7 +1,7 @@
-import tsPlugin from '@typescript-eslint/eslint-plugin'
-import tsParser from '@typescript-eslint/parser'
-import prettier from 'eslint-config-prettier'
-import pluginPrettier from 'eslint-plugin-prettier'
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+import prettier from 'eslint-config-prettier';
+import pluginPrettier from 'eslint-plugin-prettier';
 
 export default [
   {
@@ -29,4 +29,4 @@ export default [
     },
   },
   prettier,
-]
+];
