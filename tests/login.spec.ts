@@ -5,6 +5,15 @@ test.beforeEach(async ({ page }) => {
   await page.goto(Config.BASE_URL);
 });
 
+test('Teste temporário para simular falha', async ({ page }, testInfo) => {
+  await page.getByTestId('username').fill(Config.USER_NAME);
+  await page.getByTestId('password').fill('Passw@rd!');
+
+  await page.getByTestId('login-button').click();
+
+  await expect(page.getByTestId('inventory-container')).toBeVisible();
+});
+
 test('Realizar login com sucesso', async ({ page }, testInfo) => {
   await page.getByTestId('username').fill(Config.USER_NAME);
   await page.getByTestId('password').fill(Config.PASSWORD);
