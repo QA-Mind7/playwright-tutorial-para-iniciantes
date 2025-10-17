@@ -45,6 +45,6 @@ jobs:
           SLACK_COLOR: ${{ steps.run_e2e_tests.outcome }}
           SLACK_TITLE: 'Resultado dos Testes E2E'
           SLACK_FOOTER: ''
-          SLACK_MESSAGE_ON_SUCCESS: 'Testes E2E executados com sucesso :green_circle:'
-          SLACK_MESSAGE_ON_FAILURE: 'Testes E2E falharam :red_circle:'
+          SLACK_MESSAGE_ON_SUCCESS: 'Testes E2E executados com sucesso'
+          SLACK_MESSAGE_ON_FAILURE: 'Testes E2E falharam'
           SLACK_MESSAGE_ON_CANCEL: 'Execução de testes E2E cancelada'
