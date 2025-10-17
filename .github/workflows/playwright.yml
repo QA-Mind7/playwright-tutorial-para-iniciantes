@@ -16,13 +16,35 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: lts/*
+
       - name: Install dependencies
         run: npm ci
-      - name: Run your tests
+
+      - name: Run E2E tests
+        id: run_e2e_tests
+        continue-on-error: true
         run: npx playwright test
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 30
+          retention-days: 15
+          if-no-files-found: ignore
+
+      - name: Slack Notification
+        if: always()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: 'qa-mind7-notifications'
+          SLACK_USERNAME: 'QaMind7Bot'
+          SLACK_ICON_EMOJI: ':bell:'
+          SLACK_COLOR: ${{ steps.run_e2e_tests.outcome }}
+          SLACK_TITLE: 'Resultado dos Testes E2E'
+          SLACK_FOOTER: ''
+          SLACK_MESSAGE_ON_SUCCESS: 'Testes E2E executados com sucesso'
+          SLACK_MESSAGE_ON_FAILURE: 'Testes E2E falharam'
+          SLACK_MESSAGE_ON_CANCEL: 'Execução de testes E2E cancelada'
