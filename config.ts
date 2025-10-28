@@ -35,4 +35,5 @@ export class Config {
   static readonly PASSWORD: string = envVars.value.PASSWORD;
 
   static readonly WORKERS: number = envVars.value.WORKERS;
+  static readonly RETRY_FAILED: number = envVars.value.RETRY_FAILED;
 }
