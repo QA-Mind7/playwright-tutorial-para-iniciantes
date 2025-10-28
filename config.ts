@@ -18,8 +18,6 @@ const envSchema = Joi.object({
   // Playwright settings
   WORKERS: Joi.number().integer().min(1).required(),
   RETRY_FAILED: Joi.number().integer().min(0).required(),
-  MAX_TEST_RUNTIME: Joi.number().integer().min(1000).required(),
-  HEADLESS_BROWSER: Joi.boolean().required(),
 }).unknown(true);
 
 const envVars = envSchema.validate(process.env, {
@@ -37,7 +35,4 @@ export class Config {
   static readonly PASSWORD: string = envVars.value.PASSWORD;
 
   static readonly WORKERS: number = envVars.value.WORKERS;
-  static readonly RETRY_FAILED: number = envVars.value.RETRY_FAILED;
-  static readonly MAX_TEST_RUNTIME: number = envVars.value.MAX_TEST_RUNTIME;
-  static readonly HEADLESS_BROWSER: boolean = envVars.value.HEADLESS_BROWSER;
 }

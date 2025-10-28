@@ -12,36 +12,44 @@ test.beforeEach(async ({ page }) => {
   await page.waitForURL(`${Config.BASE_URL}/inventory.html`);
 });
 
-test('Adicionar produto ao carrinho com sucesso', async ({ page }, testInfo) => {
-  await page.getByTestId('add-to-cart-sauce-labs-backpack').click();
+test(
+  'Adicionar produto ao carrinho com sucesso',
+  { tag: 'Regression' },
+  async ({ page }, testInfo) => {
+    await page.getByTestId('add-to-cart-sauce-labs-backpack').click();
 
-  await expect(page.getByTestId('shopping-cart-badge')).toBeVisible();
-  await expect(page.getByTestId('shopping-cart-badge')).toHaveText('1');
+    await expect(page.getByTestId('shopping-cart-badge')).toBeVisible();
+    await expect(page.getByTestId('shopping-cart-badge')).toHaveText('1');
 
-  await page.getByTestId('shopping-cart-link').click();
+    await page.getByTestId('shopping-cart-link').click();
 
-  await expect(page.getByText('Sauce Labs Backpack')).toBeVisible();
+    await expect(page.getByText('Sauce Labs Backpack')).toBeVisible();
 
-  await testInfo.attach('produto adicionado com sucesso', {
-    body: await page.screenshot({ fullPage: true }),
-    contentType: 'image/png',
-  });
-});
+    await testInfo.attach('produto adicionado com sucesso', {
+      body: await page.screenshot({ fullPage: true }),
+      contentType: 'image/png',
+    });
+  },
+);
 
-test('Remover produto do carrinho com sucesso', async ({ page }, testInfo) => {
-  await page.getByTestId('add-to-cart-sauce-labs-backpack').click();
+test(
+  'Remover produto do carrinho com sucesso',
+  { tag: 'Regression' },
+  async ({ page }, testInfo) => {
+    await page.getByTestId('add-to-cart-sauce-labs-backpack').click();
 
-  await expect(page.getByTestId('shopping-cart-badge')).toBeVisible();
-  await expect(page.getByTestId('shopping-cart-badge')).toHaveCount(1);
+    await expect(page.getByTestId('shopping-cart-badge')).toBeVisible();
+    await expect(page.getByTestId('shopping-cart-badge')).toHaveCount(1);
 
-  await page.getByTestId('shopping-cart-link').click();
+    await page.getByTestId('shopping-cart-link').click();
 
-  await page.getByTestId('remove-sauce-labs-backpack').click();
+    await page.getByTestId('remove-sauce-labs-backpack').click();
 
-  await expect(page.getByTestId('shopping-cart-badge')).toHaveCount(0);
+    await expect(page.getByTestId('shopping-cart-badge')).toHaveCount(0);
 
-  await testInfo.attach('produto removido com sucesso', {
-    body: await page.screenshot({ fullPage: true }),
-    contentType: 'image/png',
-  });
-});
+    await testInfo.attach('produto removido com sucesso', {
+      body: await page.screenshot({ fullPage: true }),
+      contentType: 'image/png',
+    });
+  },
+);

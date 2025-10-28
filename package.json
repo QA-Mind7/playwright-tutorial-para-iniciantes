@@ -7,6 +7,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "test:dev": "ENVIRONMENT=dev playwright test --project=chromium",
+    "smoke": "npx playwright test --grep @Smoke --project=chromium",
+    "regression": "npx playwright test --grep @Regression --project=chromium",
     "show:report": "playwright show-report"
   },
   "keywords": [],

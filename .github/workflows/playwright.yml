@@ -1,50 +1,142 @@
 name: Playwright Tests
+
 on:
   push:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
+
+env:
+  BASE_URL: ${{ secrets.BASE_URL }}
+  USER_NAME: ${{ secrets.USER_NAME }}
+  PASSWORD: ${{ secrets.PASSWORD }}
+  WORKERS: 4
+  RETRY_FAILED: 1
+  MAX_TEST_RUNTIME: 60000
+  HEADLESS_BROWSER: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
 jobs:
-  playwright:
-    name: 'Playwright Tests'
+  setup-and-smoke-test:
+    name: Setup and Smoke Test
+    timeout-minutes: 60
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.56.0-noble
-      options: --user 1001
+    outputs:
+      smoke_outcome: ${{ steps.smoke.outcome }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Playwright Setup on Runner
+        uses: ./.github/actions/playwright-setup
+
+      - name: Run Smoke tests
+        id: smoke
+        run: npm run smoke
+
+      - name: Upload Playwright Report
+        if: always()
+        uses: ./.github/actions/playwright-report
+        with:
+          test-step-outcome: ${{ steps.smoke.outcome }}
+
+  regression-test:
+    name: Regression Test
+    needs: setup-and-smoke-test
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    outputs:
+      regression_outcome: ${{ steps.regression.outcome }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Playwright Setup on Runner
+        uses: ./.github/actions/playwright-setup
+
+      - name: Run Regression tests
+        id: regression
+        run: npm run regression
+
+      - name: Upload Playwright Report
+        if: always()
+        uses: ./.github/actions/playwright-report
+        with:
+          test-step-outcome: ${{ steps.regression.outcome }}
+
+  merge-report:
+    name: Merge Report
+    if: always()
+    needs: [setup-and-smoke-test, regression-test]
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
 
-      - name: Run E2E tests
-        id: run_e2e_tests
-        continue-on-error: true
-        run: npx playwright test
-
-      - name: Upload report
-        uses: actions/upload-artifact@v4
-        if: always()
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
         with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 15
-          if-no-files-found: ignore
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
 
-      - name: Slack Notification
-        if: always()
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_CHANNEL: 'qa-mind7-notifications'
-          SLACK_USERNAME: 'QaMind7Bot'
-          SLACK_ICON_EMOJI: ':bell:'
-          SLACK_COLOR: ${{ steps.run_e2e_tests.outcome }}
-          SLACK_TITLE: 'Resultado dos Testes E2E'
-          SLACK_FOOTER: ''
-          SLACK_MESSAGE_ON_SUCCESS: 'Testes E2E executados com sucesso'
-          SLACK_MESSAGE_ON_FAILURE: 'Testes E2E falharam'
-          SLACK_MESSAGE_ON_CANCEL: 'Execução de testes E2E cancelada'
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Merged HTML Reports
+          path: playwright-report
+          retention-days: 3
+
+  build-report:
+    name: Build Report
+    if: always()
+    needs: merge-report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Merged HTML Reports
+        uses: actions/download-artifact@v4
+        with:
+          name: Merged HTML Reports
+          path: ./_site
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+  depoloy-report:
+    name: Deploy Report
+    if: always()
+    needs: build-report
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

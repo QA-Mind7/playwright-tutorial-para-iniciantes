@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto(Config.BASE_URL);
 });
 
-test('Realizar login com sucesso', async ({ page }, testInfo) => {
+test('Realizar login com sucesso', { tag: 'Smoke' }, async ({ page }, testInfo) => {
   await page.getByTestId('username').fill(Config.USER_NAME);
   await page.getByTestId('password').fill(Config.PASSWORD);
 
@@ -20,20 +20,24 @@ test('Realizar login com sucesso', async ({ page }, testInfo) => {
   });
 });
 
-test('Realizar login informando credenciais inválidas', async ({ page }, testInfo) => {
-  await page.getByTestId('username').fill('user.invalid');
-  await page.getByTestId('password').fill('senha');
+test(
+  'Realizar login informando credenciais inválidas',
+  { tag: 'Regression' },
+  async ({ page }, testInfo) => {
+    await page.getByTestId('username').fill('user.invalid');
+    await page.getByTestId('password').fill('senha');
 
-  await page.getByTestId('login-button').click();
+    await page.getByTestId('login-button').click();
 
-  await expect(page.getByTestId('error')).toContainText(
-    'Username and password do not match any user in this service',
-  );
+    await expect(page.getByTestId('error')).toContainText(
+      'Username and password do not match any user in this service',
+    );
 
-  await expect(page).toHaveURL(Config.BASE_URL);
+    await expect(page).toHaveURL(Config.BASE_URL);
 
-  await testInfo.attach('login inválido', {
-    body: await page.screenshot({ fullPage: true }),
-    contentType: 'image/png',
-  });
-});
+    await testInfo.attach('login inválido', {
+      body: await page.screenshot({ fullPage: true }),
+      contentType: 'image/png',
+    });
+  },
+);
