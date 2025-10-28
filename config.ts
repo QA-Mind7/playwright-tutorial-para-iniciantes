@@ -1,7 +1,13 @@
 import * as dotenv from 'dotenv';
 import Joi from 'joi';
 
-dotenv.config();
+const environmentPath = process.env.ENVIRONMENT
+  ? `./env/.env.${process.env.ENVIRONMENT}`
+  : `./env/.env.dev`; // Default to dev environment
+
+dotenv.config({
+  path: environmentPath,
+});
 
 const envSchema = Joi.object({
   // Environment
