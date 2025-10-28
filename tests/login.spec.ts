@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto(Config.BASE_URL);
 });
 
-test('Realizar login com sucesso', { tag: 'Smoke' }, async ({ page }, testInfo) => {
+test('Realizar login com sucesso', { tag: '@Smoke' }, async ({ page }, testInfo) => {
   await page.getByTestId('username').fill(Config.USER_NAME);
   await page.getByTestId('password').fill(Config.PASSWORD);
 
@@ -22,7 +22,7 @@ test('Realizar login com sucesso', { tag: 'Smoke' }, async ({ page }, testInfo) 
 
 test(
   'Realizar login informando credenciais inválidas',
-  { tag: 'Regression' },
+  { tag: '@Regression' },
   async ({ page }, testInfo) => {
     await page.getByTestId('username').fill('user.invalid');
     await page.getByTestId('password').fill('senha');

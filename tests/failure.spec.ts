@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto(Config.BASE_URL);
 });
 
-test('Teste de "Fumaça" com falha', { tag: 'Smoke' }, async ({ page }) => {
+test('Teste de "Fumaça" com falha', { tag: '@Smoke' }, async ({ page }) => {
   await page.getByTestId('username').fill(Config.USER_NAME);
   await page.getByTestId('password').fill(Config.PASSWORD);
 
@@ -13,7 +13,7 @@ test('Teste de "Fumaça" com falha', { tag: 'Smoke' }, async ({ page }) => {
   expect(1).toBe(2);
 });
 
-test('Teste Regressão com falha', { tag: 'Regression' }, async ({ page }) => {
+test('Teste Regressão com falha', { tag: '@Regression' }, async ({ page }) => {
   await page.getByTestId('username').fill(Config.USER_NAME);
   await page.getByTestId('password').fill(Config.PASSWORD);
 

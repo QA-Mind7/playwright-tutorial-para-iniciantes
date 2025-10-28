@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 
 test(
   'Adicionar produto ao carrinho com sucesso',
-  { tag: 'Regression' },
+  { tag: '@Regression' },
   async ({ page }, testInfo) => {
     await page.getByTestId('add-to-cart-sauce-labs-backpack').click();
 
@@ -34,7 +34,7 @@ test(
 
 test(
   'Remover produto do carrinho com sucesso',
-  { tag: 'Regression' },
+  { tag: '@Regression' },
   async ({ page }, testInfo) => {
     await page.getByTestId('add-to-cart-sauce-labs-backpack').click();
 
